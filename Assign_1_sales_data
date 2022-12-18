@@ -1,0 +1,65 @@
+ CREATE OR REPLACE TABLE SALES_DATA
+          (
+           order_id	VARCHAR(30),
+            order_date DATE,
+            ship_date DATE,
+            ship_mode VARCHAR(30),
+            customer_name VARCHAR(30),
+            segment	VARCHAR(30),
+            state VARCHAR(50),
+            country	VARCHAR(50),
+            market VARCHAR(30),
+            region VARCHAR(30),
+            product_id VARCHAR(30),
+            category VARCHAR(30),
+            sub_category VARCHAR(30),
+            product_name VARCHAR(200),
+            sales VARCHAR(30),
+            quantity VARCHAR(30),
+            discount VARCHAR(30),
+            profit VARCHAR(30),
+            shipping_cost VARCHAR(30),
+            order_priority VARCHAR(20),
+            year VARCHAR(30)
+          );
+  DESCRIBE TABLE SALES_DATA;
+        
+  SELECT * FROM SALES_DATA
+         
+ --SET PRIMARY KEY.
+        ALTER TABLE SALES_DATA
+        ADD PRIMARY KEY (ORDER_ID);
+       
+         
+ --EXTACT THE LAST NUMBER AFTER THE - AND CREATE OTHER COLUMN AND UPDATE IT.
+         SELECT *, SUBSTR(ORDER_ID,9,6) AS ORDER_NUMBER FROM SALES_DATA;
+         
+         
+ --FLAG ,IF DISCOUNT IS GREATER THEN 0 THEN  YES ELSE FALSE AND PUT IT IN NEW COLUMN FRO EVERY ORDER ID.
+           SELECT ORDER_ID,DISCOUNT,  CASE 
+                                    WHEN DISCOUNT > 0 THEN 'YES'
+                                    ELSE 'NO'
+                                    END AS DISCOUNT_YES_NO
+          FROM SALES_DATA;
+         
+  --FIND OUT HOW MUCH DAYS TAKEN FOR EACH ORDER TO PROCESS FOR THE SHIPMENT FOR EVERY ORDER ID.
+         ALTER TABLE SALES_DATA
+         ADD COLUMN SHIPPING_DURATION VARCHAR(10);
+         
+         UPDATE SALES_DATA
+         SET SHIPPING_DURATION =  DATEDIFF(DAY,ORDER_DATE,SHIP_DATE) ;
+         
+         
+         
+         SELECT ORDER_ID,SHIPPING_DURATION FROM SALES_DATA;
+         
+  --FLAG THE PROCESS DAY AS BY RATING IF IT TAKES LESS OR EQUAL 3  DAYS MAKE 5,LESS OR EQUAL THAN 6 DAYS BUT MORE THAN 3 MAKE 4,LESS THAN 10 BUT MORE THAN 6 MAKE 3,MORE THAN 10 MAKE IT 2 FOR EVERY ORDER ID.
+            SELECT *, CASE
+                   WHEN SHIPPING_DURATION <= 3 THEN 5
+                   WHEN SHIPPING_DURATION <= 6 AND SHIPPING_DURATION > 3 THEN 4
+                   WHEN SHIPPING_DURATION <10 AND SHIPPING_DURATION > 6 THEN 3
+                   ELSE 2 
+                   END AS RATING
+         FROM SALES_DATA;
+         
+         
